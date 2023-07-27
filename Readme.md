@@ -161,4 +161,34 @@ Integration tests
 ---
 
 ![integration_test_config.png](docs/integration_test_config.png)
--> now broken with Fatal error: Allowed memory size of 134217728 bytes exhausted (tried to allocate 20480 bytes) in /var/www/html/vendor/magento/framework/Setup/Declaration/Schema/Diff/SchemaDiff.php on line 76 for some reason
+
+
+Error: Allowed memory size of 134217728 bytes exhausted
+---
+
+If you get error `Fatal error: Allowed memory size of 134217728 bytes exhausted (tried to allocate 20480 bytes) in /var/www/html/vendor/magento/framework/Setup/Declaration/Schema/Diff/SchemaDiff.php on line 76`
+
+Add `-d memory_limit=-1` to part of `src/dev/tests/integration/framework/Magento/TestFramework/Application.php` line 562
+From 
+```php
+        // run install script
+        $this->_shell->execute(
+            PHP_BINARY . ' -d memory_limit=-1 -f %s setup:install -vvv ' . implode(' ', array_keys($installParams)),
+            array_merge([BP . '/bin/magento'], array_values($installParams))
+        );
+```
+To
+```php
+        // run install script
+        $this->_shell->execute(
+            PHP_BINARY . ' -f %s setup:install -vvv ' . implode(' ', array_keys($installParams)),
+            array_merge([BP . '/bin/magento'], array_values($installParams))
+        );
+```
+
+Speed up tests 
+---
+
+see: https://developer.adobe.com/commerce/testing/guide/integration/#tests_cleanup-constant
+
+In src/dev/tests/integration/phpunit.xml.dist change to `<const name="TESTS_CLEANUP" value="disabled"/>`
