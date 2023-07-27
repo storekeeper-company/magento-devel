@@ -104,6 +104,8 @@ bin/magento cache:clean
 Prepare integration tests
 ---
 
+Based on adobe manual: https://developer.adobe.com/commerce/testing/guide/integration/#prepare-integration-test-execution
+
 ```bash
 docker-compose run db bash
 
@@ -143,3 +145,20 @@ cd /var/www/html/dev/tests/unit
 ../../../vendor/bin/phpunit /var/www/html/magento2-plugin/Test/Unit/
 ```
 
+Debugging unit tests with PHPStorm
+-- 
+
+Based on https://developer.adobe.com/commerce/testing/guide/unit/phpstorm/ and https://developer.adobe.com/commerce/testing/guide/integration/#run-integration-tests-in-phpstorm
+
+Unit tests 
+---
+
+1. Add the docker interpretter ![Added the docker interpretter](docs/new_interpreter.png)
+2. Add test framework ![Add test framework](docs/test_framework.png)
+3. Create configuration ![Create configuration](docs/create_configuration.png)
+
+Integraton tests
+---
+
+![integration_test_config.png](integration_test_config.png)
+-> now broken with Fatal error: Allowed memory size of 134217728 bytes exhausted (tried to allocate 20480 bytes) in /var/www/html/vendor/magento/framework/Setup/Declaration/Schema/Diff/SchemaDiff.php on line 76 for some reason
