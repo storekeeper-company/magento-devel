@@ -1,0 +1,3 @@
+[submodule "magento2-plugin"]
+	path = magento2-plugin
+	url = git@github.com:storekeeper-company/magento2-plugin.git

@@ -7,7 +7,6 @@ services:
       context: docker/magento
     ports:
       - 9442:80
-      - 9443:443
     depends_on:
       - db
       - redis
@@ -16,11 +15,12 @@ services:
     volumes:
       - composer-home:/home/docker/.composer/
       - "./src/.:/var/www/html/"
-      - "./env/.:/var/www/html/install-env"
+      - "./magento2-plugin/.:/var/www/html/magento2-plugin/"
+      - "./env/.:/var/www/html/env"
       - sockdata:/sock
     environment:
       APACHE_DOCUMENT_ROOT: pub/
-      APACHE_EXTENSIONS: "ssl socache_shmcb"
+#      APACHE_EXTENSIONS: "ssl socache_shmcb"
 
       #extra_hosts: &appextrahosts
       ## Selenium support, replace "magento.test" with URL of your site

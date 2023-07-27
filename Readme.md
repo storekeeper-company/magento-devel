@@ -1,5 +1,6 @@
 
-Install
+Install magento
+--
 
 ```bash 
 docker-compose run app bash
@@ -12,14 +13,14 @@ composer config --no-plugins allow-plugins.magento/inventory-composer-installer 
 composer config --no-plugins allow-plugins.laminas/laminas-dependency-plugin true
 
 
-source install-env/blackfire.env  
-source install-env/db.env  
-source install-env/elasticsearch.env  
-source install-env/magento.env  
-source install-env/opensearch.env  
-source install-env/phpfpm.env  
-source install-env/rabbitmq.env  
-source install-env/redis.env
+source env/blackfire.env  
+source env/db.env  
+source env/elasticsearch.env  
+source env/magento.env  
+source env/opensearch.env  
+source env/phpfpm.env  
+source env/rabbitmq.env  
+source env/redis.env
 
 bin/magento setup:install \
   --db-host="$MYSQL_HOST" \
@@ -27,7 +28,7 @@ bin/magento setup:install \
   --db-user="$MYSQL_USER" \
   --db-password="$MYSQL_PASSWORD" \
   --base-url=http://localhost:9442/ \
-  --base-url-secure=http://localhost:9443/ \
+  --base-url-secure=http://localhost:9442/ \
   --backend-frontname="$MAGENTO_ADMIN_FRONTNAME" \
   --admin-firstname="$MAGENTO_ADMIN_FIRST_NAME" \
   --admin-lastname="$MAGENTO_ADMIN_LAST_NAME" \
@@ -59,8 +60,86 @@ bin/magento setup:install \
   --search-engine=opensearch \
   --use-rewrites=1 \
   --no-interaction
- 
- 
-bin/magento config:set web/secure/base_url http://localhost:9443/
-bin/magento config:set web/unsecure/base_url http://localhost:9442/
+
+bin/magento module:disable Magento_AdminAdobeImsTwoFactorAuth 
+bin/magento module:disable Magento_TwoFactorAuth 
 ```
+
+
+Changing root magento url
+--
+
+```bash 
+ROOT_URL=http://localhost:9442/
+bin/magento config:set web/unsecure/base_url $ROOT_URL
+bin/magento config:set web/secure/base_url $ROOT_URL
+bin/magento cache:flush
+bin/magento setup:di:compile
+
+```
+
+
+Installing plugin
+---
+
+Add `/var/www/html/magento2-plugin/` repo to `src/composer.json`
+```json
+    "repositories": [
+        ...,
+        {
+            "type": "path",
+            "url": "/var/www/html/magento2-plugin/"
+        }
+    ],
+```
+
+```bash
+composer require "storekeeper/magento2-plugin @dev" &&\
+bin/magento setup:upgrade &&\
+bin/magento setup:di:compile &&\
+bin/magento setup:static-content:deploy &&\
+bin/magento cache:clean
+```
+
+Prepare integration tests
+---
+
+```bash
+docker-compose run db bash
+
+# If database doesn't exist, create it and add user permissions
+mysql -h"${MYSQL_INTEGRATION_HOST}" -uroot -p"${MYSQL_ROOT_PASSWORD}" "${MYSQL_INTEGRATION_DATABASE}" -e exit &> /dev/null ||
+  mysqladmin -h"${MYSQL_INTEGRATION_HOST}" -uroot -p"${MYSQL_ROOT_PASSWORD}" create "${MYSQL_INTEGRATION_DATABASE}" &&
+  echo "Database ${MYSQL_INTEGRATION_DATABASE} created." &&
+  mysql -uroot -p"${MYSQL_ROOT_PASSWORD}" -h"${MYSQL_INTEGRATION_HOST}" \
+    -e "GRANT ALL PRIVILEGES ON ${MYSQL_INTEGRATION_DATABASE}.* TO '${MYSQL_INTEGRATION_USER}'@'%';FLUSH PRIVILEGES;"
+
+```
+```bash
+cp template/dev/tests/integration/etc/install-config-mysql.php src/dev/tests/integration/etc/install-config-mysql.php
+
+docker-compose run app bash
+bin/magento module:enable Magento_AdminAdobeImsTwoFactorAuth 
+bin/magento module:enable Magento_TwoFactorAuth 
+```
+
+Run integration tests
+--
+
+```bash
+
+docker-compose run app bash
+cd /var/www/html/dev/tests/integration
+../../../vendor/bin/phpunit /var/www/html/magento2-plugin/Test/Integration/
+```
+
+Run unit tests
+--
+
+```bash
+
+docker-compose run app bash
+cd /var/www/html/dev/tests/unit
+../../../vendor/bin/phpunit /var/www/html/magento2-plugin/Test/Unit/
+```
+
