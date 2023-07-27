@@ -61,19 +61,24 @@ bin/magento setup:install \
   --use-rewrites=1 \
   --no-interaction
 
-bin/magento module:disable Magento_AdminAdobeImsTwoFactorAuth 
-bin/magento module:disable Magento_TwoFactorAuth 
+
+composer require markshust/magento2-module-disabletwofactorauth
+bin/magento module:enable MarkShust_DisableTwoFactorAuth
+bin/magento setup:upgrade
+bin/magento config:set twofactorauth/general/enable 0
 ```
 
 
-Changing root magento url
+Changing root magento url to external provider by cloudflare
 --
 
+Services like cloudflare zero conf tunnel can be used can be used. https://developers.cloudflare.com/cloudflare-one/connections/connect-apps/
+
 ```bash 
-ROOT_URL=http://localhost:9442/
-bin/magento config:set web/unsecure/base_url $ROOT_URL
-bin/magento config:set web/secure/base_url $ROOT_URL
-bin/magento cache:flush
+export ROOT_URL=https://luki-magento.code4.pizza/ 
+bin/magento config:set web/unsecure/base_url $ROOT_URL &&\
+bin/magento config:set web/secure/base_url $ROOT_URL &&\
+bin/magento cache:flush &&\
 bin/magento setup:di:compile
 
 ```
