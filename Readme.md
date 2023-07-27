@@ -157,8 +157,8 @@ Unit tests
 2. Add test framework ![Add test framework](docs/test_framework.png)
 3. Create configuration ![Create configuration](docs/create_configuration.png)
 
-Integraton tests
+Integration tests
 ---
 
-![integration_test_config.png](integration_test_config.png)
+![integration_test_config.png](docs/integration_test_config.png)
 -> now broken with Fatal error: Allowed memory size of 134217728 bytes exhausted (tried to allocate 20480 bytes) in /var/www/html/vendor/magento/framework/Setup/Declaration/Schema/Diff/SchemaDiff.php on line 76 for some reason
