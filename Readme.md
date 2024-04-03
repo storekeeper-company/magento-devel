@@ -2,12 +2,14 @@
 Install magento
 --
 
-Generate public and private keys according to [Magento Installation Guide](https://experienceleague.adobe.com/en/docs/commerce-operations/installation-guide/prerequisites/authentication-keys)
-Open file env/magento.env and set values for variables **MAGENTO_PUBLIC** and **MAGENTO_PRIVATE** according to data from previous step
+Generate public and private keys according to [Magento Installation Guide](https://experienceleague.adobe.com/en/docs/commerce-operations/installation-guide/prerequisites/authentication-keys)  
+
+Open file env/magento.env and set values for variables **MAGENTO_PUBLIC** and **MAGENTO_PRIVATE** according to data from previous step  
+
 Edit variable **META_VERSION** according to desired Magento version (i.e. 2.4.6-p4)
 
 ```bash 
-docker-compose run app bash
+docker compose run app bash
 
 source env/blackfire.env  
 source env/db.env  
@@ -18,7 +20,7 @@ source env/phpfpm.env
 source env/rabbitmq.env  
 source env/redis.env
 
-composer config --global http-basic.repo.magento.com "$MAGENTO_PUBLIC" "$MAGENTO_SECRET"
+composer config --global http-basic.repo.magento.com "$MAGENTO_PUBLIC" "$MAGENTO_PRIVATE"
 composer create-project --repository-url=https://repo.magento.com/ \
      "${META_PACKAGE}" /tmp/exampleproject "${META_VERSION}"
 
