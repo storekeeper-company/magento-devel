@@ -120,7 +120,7 @@ Prepare integration tests
 Based on adobe manual: https://developer.adobe.com/commerce/testing/guide/integration/#prepare-integration-test-execution
 
 ```bash
-docker-compose run db bash
+docker compose run db bash
 
 # If database doesn't exist, create it and add user permissions
 mysql -h"${MYSQL_INTEGRATION_HOST}" -uroot -p"${MYSQL_ROOT_PASSWORD}" "${MYSQL_INTEGRATION_DATABASE}" -e exit &> /dev/null ||
@@ -133,7 +133,7 @@ mysql -h"${MYSQL_INTEGRATION_HOST}" -uroot -p"${MYSQL_ROOT_PASSWORD}" "${MYSQL_I
 ```bash
 cp template/dev/tests/integration/etc/install-config-mysql.php src/dev/tests/integration/etc/install-config-mysql.php
 
-docker-compose run app bash
+docker compose run app bash
 bin/magento module:enable Magento_AdminAdobeImsTwoFactorAuth 
 bin/magento module:enable Magento_TwoFactorAuth 
 ```
@@ -143,7 +143,7 @@ Run integration tests
 
 ```bash
 
-docker-compose run app bash
+docker compose run app bash
 cd /var/www/html/dev/tests/integration
 ../../../vendor/bin/phpunit /var/www/html/magento2-plugin/Test/Integration/
 ```
@@ -153,7 +153,7 @@ Run unit tests
 
 ```bash
 
-docker-compose run app bash
+docker compose run app bash
 cd /var/www/html/dev/tests/unit
 ../../../vendor/bin/phpunit /var/www/html/magento2-plugin/Test/Unit/
 ```
