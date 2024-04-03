@@ -2,16 +2,12 @@
 Install magento
 --
 
+Generate public and private keys according to [Magento Installation Guide](https://experienceleague.adobe.com/en/docs/commerce-operations/installation-guide/prerequisites/authentication-keys)
+Open file env/magento.env and set values for variables **MAGENTO_PUBLIC** and **MAGENTO_PRIVATE** according to data from previous step
+Edit variable **META_VERSION** according to desired Magento version (i.e. 2.4.6-p4)
+
 ```bash 
 docker-compose run app bash
-
-composer config --global http-basic.repo.magento.com 2cb7731c52c5142a6351fe1a3bfbf013 ea82d7f9604d09ca41cd2ea9264f1f71
-composer create-project --repository=https://repo.magento.com/ magento/project-community-edition=2.4.6-p1 .
-
-composer config --no-plugins allow-plugins.magento/magento-composer-installer true
-composer config --no-plugins allow-plugins.magento/inventory-composer-installer true
-composer config --no-plugins allow-plugins.laminas/laminas-dependency-plugin true
-
 
 source env/blackfire.env  
 source env/db.env  
@@ -22,13 +18,24 @@ source env/phpfpm.env
 source env/rabbitmq.env  
 source env/redis.env
 
+composer config --global http-basic.repo.magento.com "$MAGENTO_PUBLIC" "$MAGENTO_SECRET"
+composer create-project --repository-url=https://repo.magento.com/ \
+     "${META_PACKAGE}" /tmp/exampleproject "${META_VERSION}"
+
+ rsync -a /tmp/exampleproject/ /var/www/html/
+ rm -rf /tmp/exampleproject/
+
+composer config --no-plugins allow-plugins.magento/magento-composer-installer true
+composer config --no-plugins allow-plugins.magento/inventory-composer-installer true
+composer config --no-plugins allow-plugins.laminas/laminas-dependency-plugin true
+
 bin/magento setup:install \
   --db-host="$MYSQL_HOST" \
   --db-name="$MYSQL_DATABASE" \
   --db-user="$MYSQL_USER" \
   --db-password="$MYSQL_PASSWORD" \
   --base-url=http://localhost:9442/ \
-  --base-url-secure=http://localhost:9442/ \
+  --base-url-secure=https://localhost:9442/ \
   --backend-frontname="$MAGENTO_ADMIN_FRONTNAME" \
   --admin-firstname="$MAGENTO_ADMIN_FIRST_NAME" \
   --admin-lastname="$MAGENTO_ADMIN_LAST_NAME" \
@@ -60,7 +67,6 @@ bin/magento setup:install \
   --search-engine=opensearch \
   --use-rewrites=1 \
   --no-interaction
-
 
 composer require markshust/magento2-module-disabletwofactorauth
 bin/magento module:enable MarkShust_DisableTwoFactorAuth

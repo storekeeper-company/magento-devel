@@ -11,7 +11,7 @@ return [
     'db-prefix' => '',
     'backend-frontname' => 'backend',
     'search-engine' => 'elasticsearch7',
-    'elasticsearch-host' => 'opensearch',
+    'elasticsearch-host' => 'elasticsearch',
     'admin-user' => \Magento\TestFramework\Bootstrap::ADMIN_NAME,
     'admin-password' => \Magento\TestFramework\Bootstrap::ADMIN_PASSWORD,
     'admin-email' => \Magento\TestFramework\Bootstrap::ADMIN_EMAIL,
