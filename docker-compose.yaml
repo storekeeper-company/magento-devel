@@ -15,6 +15,7 @@ services:
     volumes:
       - composer-home:/home/docker/.composer/
       - "./src/.:/var/www/html/"
+      - "./docker/.:/var/www/html/docker/"
       - "./magento2-plugin/.:/var/www/html/magento2-plugin/"
       - "./env/.:/var/www/html/env"
       - sockdata:/sock

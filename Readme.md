@@ -1,4 +1,17 @@
 
+
+Auto-Full install
+--
+
+```bash
+docker compose run app docker/install.sh
+```
+
+cleanup 
+```bash
+docker compose down --volumes
+```
+
 Install magento
 --
 
@@ -7,6 +20,8 @@ Generate public and private keys according to [Magento Installation Guide](https
 Open file env/magento.env and set values for variables **MAGENTO_PUBLIC** and **MAGENTO_PRIVATE** according to data from previous step  
 
 Edit variable **META_VERSION** according to desired Magento version (i.e. 2.4.6-p4)
+
+
 
 ```bash 
 docker compose run app bash
