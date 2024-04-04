@@ -24,7 +24,7 @@ composer config --global http-basic.repo.magento.com "$MAGENTO_PUBLIC" "$MAGENTO
 composer create-project --repository-url=https://repo.magento.com/ \
      "${META_PACKAGE}" /tmp/exampleproject "${META_VERSION}"
 
- rsync -a /tmp/exampleproject/ /var/www/html/
+cp /tmp/exampleproject/* /var/www/html/
  rm -rf /tmp/exampleproject/
 
 composer config --no-plugins allow-plugins.magento/magento-composer-installer true
